@@ -27,6 +27,15 @@ export const usePhonebookStore = defineStore('phonebook', {
             const start = (state.currentPage - 1) * state.itemsPerPage;
             const end = start + state.itemsPerPage;
             return state.contacts.slice(start, end);
+        },
+
+        availableCities: (state) => {
+            // Mengambil property address.city
+            const cities = state.contacts
+                .map(u => u.address?.city)
+                .filter((city): city is string => !!city);
+            
+            return [...new Set(cities)].sort();
         }
     },
     actions: {
@@ -69,7 +78,6 @@ export const usePhonebookStore = defineStore('phonebook', {
             setTimeout(() => { if(!this.isDeleteModalOpen) this.selectedContact = null }, 300);
         },
 
-        // --- SESUAIKAN ACTION DELETE ---
         async deleteContact() {
             if (!this.selectedContact) return;
             
@@ -111,8 +119,19 @@ export const usePhonebookStore = defineStore('phonebook', {
         async fetchContactById(id: string | number) {
             this.loading = true;
             try {
-                const { data } = await axios.get<User>(`${API_URL}/${id}`);
-                this.selectedContact = data;
+                //Cek state lokal
+                const localContact = this.contacts.find(u => u.id === Number(id));
+
+                if (localContact) {
+                    this.selectedContact = { ...localContact };
+                } else {
+                    const { data } = await axios.get<User>(`${API_URL}/${id}`);
+                    this.selectedContact = data;
+                }
+            } catch (error) {
+                console.error("Detail tidak ditemukan di server/local", error);
+                toast.error('Kontak tidak ditemukan');
+                this.selectedContact = null;
             } finally {
                 this.loading = false;
             }

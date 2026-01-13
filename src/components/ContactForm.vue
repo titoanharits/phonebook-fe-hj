@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'; 
+import { ref, onMounted } from 'vue'; 
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
-import { User, Mail, Phone, MapPin, Save, HelpCircle} from 'lucide-vue-next';
+import { User, Mail, Phone, MapPin, Save, HelpCircle, Loader2} from 'lucide-vue-next';
+import { usePhonebookStore } from '../stores/usePhonebook';
 
 // Definisi Props
 interface FormProps {
@@ -23,6 +24,13 @@ const emit = defineEmits(['submit']);
 // State Modal Confirm
 const isConfirmOpen = ref(false);
 const pendingValues = ref<any>(null);
+
+const store = usePhonebookStore();
+
+// Fetch data city
+onMounted(async () => {
+  await store.fetchContacts();
+});
 
 // Skema Validasi
 const schema = yup.object({
@@ -45,7 +53,6 @@ const { value: email } = useField('email');
 const { value: phone } = useField('phone');
 const { value: city } = useField('city');
 
-const cities = ['Kota Surabaya', 'Kota Malang', 'Kab. Jember', 'Kota Blitar', 'Kab. Pacitan', 'Kota Probolinggo'];
 
 const onFormSubmit = handleSubmit((values) => {
   pendingValues.value = values;
@@ -99,13 +106,28 @@ const handleConfirm = () => {
           <span v-if="errors.phone" class="text-red-500 text-[11px] font-bold mt-2 ml-2 block italic">! {{ errors.phone }}</span>
         </div>
         <div class="group">
-          <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Domisili</label>
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">
+            Domisili
+          </label>
           <div class="relative">
             <MapPin class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" :size="18" />
-            <select v-model="city" class="w-full pl-14 pr-10 py-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold appearance-none">
-              <option value="" disabled>Pilih Kota</option>
-              <option v-for="c in cities" :key="c" :value="c">{{ c }}</option>
+            
+            <select 
+              v-model="city" 
+              :disabled="store.loading"
+              class="w-full pl-14 pr-10 py-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold appearance-none disabled:opacity-50"
+            >
+              <option value="" disabled>
+                {{ store.loading ? 'Memuat data kota...' : 'Pilih Kota' }}
+              </option>
+              <option v-for="c in store.availableCities" :key="c" :value="c">
+                {{ c }}
+              </option>
             </select>
+
+            <div v-if="store.loading" class="absolute right-5 top-1/2 -translate-y-1/2">
+              <Loader2 class="animate-spin text-blue-500" :size="16" />
+            </div>
           </div>
           <span v-if="errors.city" class="text-red-500 text-[11px] font-bold mt-2 ml-2 block italic">! {{ errors.city }}</span>
         </div>
