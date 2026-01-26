@@ -15,12 +15,12 @@ const store = usePhonebookStore();
       class="group bg-white rounded-3xl border border-slate-100 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1"
     >
       <div class="flex items-center gap-4 mb-6">
-        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+        <div class="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center font-bold text-lg group-hover:bg-red-600 group-hover:text-white transition-colors">
           {{ contact.name.charAt(0) }}
         </div>
         <div class="overflow-hidden">
-          <h3 class="font-bold text-slate-900 truncate">{{ contact.name }}</h3>
-          <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">@{{ contact.username }}</p>
+          <h3 class="font-bold text-red-900 truncate">{{ contact.name }}</h3>
+          <p class="text-xs text-red-400 font-medium tracking-wide uppercase">@{{ contact.username }}</p>
         </div>
       </div>
 

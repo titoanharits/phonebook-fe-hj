@@ -35,6 +35,10 @@ onMounted(() => {
         </RouterLink>
       </div>
 
+      <div class="mt-2">
+        <SearchForm />
+      </div>
+
       <ContactTable />
 
       <div class="mt-12">

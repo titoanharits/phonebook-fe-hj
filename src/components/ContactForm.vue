@@ -35,7 +35,7 @@ onMounted(async () => {
 // Skema Validasi
 const schema = yup.object({
   username: yup.string().required('Username wajib diisi'),
-  name: yup.string().required('Nama wajib diisi'),
+  name: yup.string().required('Nama wajib diisi').max(15, 'Maksimal 15 karakter'),
   email: yup.string().email('Email tidak valid').required('Email wajib diisi'),
   phone: yup.string().required('Telepon wajib diisi').matches(/^[0-9]+$/, 'Nomor telepon hanya boleh berisi angka').min(6, 'Minimal 6 digit').max(13, 'Maksimal 13 digit'),
   city: yup.string().required('Kota wajib dipilih'),
@@ -138,6 +138,9 @@ const handleConfirm = () => {
         {{ loading ? 'SINKRONISASI...' : submitLabel.toUpperCase() }}
       </button>
     </form>
+    <RouterLink to="/" class="absolute top-6 right-6 bg-slate-400 text-gray-100 px-4 py-2 rounded-2xl hover:text-slate-600 transition-colors font-bold text-sm">
+      Kembali ke Daftar Kontak
+    </RouterLink>
 
     <div v-if="isConfirmOpen" class="fixed inset-0 z-999 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
       <div class="bg-white p-10 rounded-[2.5rem] max-w-sm w-full shadow-2xl border border-slate-100 animate-in zoom-in duration-300">
